@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cors from 'cors';
 import { config } from "dotenv";
 import router from "./router/route.js";
+import connect from "./database/connection.js";
 
 const app = express();
 
@@ -23,6 +24,14 @@ app.get('/', (req, res) => {
     }
 })
 
-app.listen(port, () => {
-    console.log(`Server connected to http://localhost:${port}`)
-})
+connect().then( () => {
+    try {
+        app.listen(port, () => {
+            console.log(`Server connected to http://localhost:${port}`)
+        })
+    } catch(error) {
+        console.log("failed to strat the server at server.js line 31")
+    }
+} ).catch(error => {
+    console.log("database connection failed")
+});

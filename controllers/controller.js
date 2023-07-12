@@ -1,7 +1,13 @@
-
+import Questions from "../models/questionsSchema"
+import Resluts from "../models/resultSchema"
 
 export async function getQuestions(req, res) {
-    res.json("questions api get request")
+    try {
+        const q = await Questions.find()
+        res.json(q)
+    } catch (error) {
+        res.json({error})
+    }
 }
 
 export async function postQuestions(req, res) {
