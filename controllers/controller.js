@@ -1,5 +1,5 @@
-import Questions from "../models/questionsSchema"
-import Resluts from "../models/resultSchema"
+import Questions from "../models/questionsSchema.js"
+import Resluts from "../models/resultSchema.js"
 
 export async function getQuestions(req, res) {
     try {
@@ -11,7 +11,19 @@ export async function getQuestions(req, res) {
 }
 
 export async function postQuestions(req, res) {
-    res.json("questions api POST request")
+    try {
+        Questions.insertMany({ 
+            questions : [0], 
+            answers : [1]
+    }//,
+    //     function(err, data) {
+    //         res.json({msg : "data saved succesfully"})
+    //     }
+    )
+    res.json("succes posting")
+    } catch (error) {
+        res.json({error})
+    }
 }
 
 export async function deleteQuestions(req, res) {
@@ -20,13 +32,34 @@ export async function deleteQuestions(req, res) {
 
 //result
 export async function getResults(req, res) {
-    res.json("RESULTS api get request")
+    try {
+        const r = await Resluts.find()
+        res.json(r)
+    } catch (error) {
+        res.json({error})
+    }
 }
 
 export async function postResults(req, res) {
-    res.json("RESULTS api POST request")
+    try {
+        const { username, results, attempts, points, achieved } = req.body
+        if(!username || !results) {
+            throw new Error('reslut useranme/result not provided')
+        }
+
+        Resluts.create({ username, results, attempts, points, achieved })
+        res.json("Result saved succesfully" )
+
+    } catch (error) {
+        res.json({error})
+    }
 }
 
 export async function deleteResults(req, res) {
-    res.json("RESULTS api DELETE request")
+    try {
+        await Resluts.deleteMany()
+    res.json("reskuts delete funcion called succesfully")
+    } catch (error) {
+        res.json({error})
+    }
 }
