@@ -15,4 +15,7 @@ router.route('/results')
     .post(controller.postResults)
     .delete(controller.deleteResults)
 
+router.route('/mcq-gen')
+    .get(controller.generateQuestions)
+
 export default router

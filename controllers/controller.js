@@ -1,5 +1,6 @@
 import Questions from "../models/questionsSchema.js"
 import Resluts from "../models/resultSchema.js"
+import { Configuration, OpenAIApi } from "openai"
 
 export async function getQuestions(req, res) {
     try {
@@ -101,6 +102,23 @@ export async function deleteResults(req, res) {
     try {
         await Resluts.deleteMany()
     res.json("reskuts delete funcion called succesfully")
+    } catch (error) {
+        res.json({error})
+    }
+}
+
+export async function generateQuestions(req, res) {
+    try {
+        const configuration = new Configuration({
+            apiKey: process.env.OPENAI_API_KEY,
+            });
+        const openai = new OpenAIApi(configuration);
+
+        const chatCompletion = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: [{role: "user", content: "Hello world"}],
+          });
+          res.json(chatCompletion.data.choices[0].message);
     } catch (error) {
         res.json({error})
     }
