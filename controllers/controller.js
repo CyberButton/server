@@ -84,12 +84,12 @@ export async function getResults(req, res) {
 
 export async function postResults(req, res) {
     try {
-        const { username, results, attempts, points, achieved } = req.body
+        const { username, results, attempts, points, achived } = req.body
         if(!username || !results) {
             throw new Error('reslut useranme/result not provided')
         }
 
-        Resluts.create({ username, results, attempts, points, achieved })
+        Resluts.create({ username, results, attempts, points, achived })
         res.json("Result saved succesfully" )
 
     } catch (error) {
