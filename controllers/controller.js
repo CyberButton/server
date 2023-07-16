@@ -114,9 +114,11 @@ export async function generateQuestions(req, res) {
             });
         const openai = new OpenAIApi(configuration);
 
+        const { promt } = req.body
+        console.log(promt)
         const chatCompletion = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
-            messages: [{role: "user", content: "Hello world"}],
+            messages: [{role: "user", content: `${promt}`}],
           });
           res.json(chatCompletion.data.choices[0].message);
     } catch (error) {
