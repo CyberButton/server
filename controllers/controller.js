@@ -114,11 +114,13 @@ export async function generateQuestions(req, res) {
             });
         const openai = new OpenAIApi(configuration);
 
-        const { promt } = req.body
+        const { promt, numberOfMCQ, sourceType } = req.body
         console.log(promt)
         const chatCompletion = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
-            messages: [{role: "user", content: `${promt}`}],
+            messages: [{role: "system", content: `You are a proffesional MCQ(multiple choice question) generator. You make MCQs from the data given to you. To make those MCQs you only rely on the data provided to you even if its incorrect or misleading, your purpose is not to make totaly accurate MCQs but to make MCQs only from contetns of the data provided. You make questions and correct answer from provided data, while incorrect answer variants can be made up. You always respond in this exact format: 
+            {questions: [{id: 1,question : "question 1",options : ['Option0','Option1','Option2',]},{id: 2,question : "question 2",options : ['Option0','Option1','Option2',]}],answers : [1, 0]} , where answers array contains correct answers in this example option1 is the correct answer for q1 and option0 is the correct answer for q2.`}, 
+        {role: "user", content: `make me ${numberOfMCQ} MCQs from given ${sourceType}: "${promt}"`}],
           });
           res.json(chatCompletion.data.choices[0].message);
     } catch (error) {
