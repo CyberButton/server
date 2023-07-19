@@ -85,12 +85,12 @@ export async function getResults(req, res) {
 
 export async function postResults(req, res) {
     try {
-        const { username, results, attempts, points, achived } = req.body
+        const { username, results, attempts, nameOfMCQ, correct, achived } = req.body
         if(!username || !results) {
             throw new Error('reslut useranme/result not provided')
         }
 
-        Resluts.create({ username, results, attempts, points, achived })
+        Resluts.create({ username, results, attempts, nameOfMCQ, correct, achived })
         res.json("Result saved succesfully")
 
     } catch (error) {
@@ -130,7 +130,7 @@ export async function generateQuestions(req, res) {
             "questions": [
               {
                 "id": 1,
-                "question": "What is the display size of Poco X3 Pro?",
+                "question": "DEBUG DEBUG DEGUB?",
                 "options": [
                   "6.67 inches",
                   "6.55 inches",
