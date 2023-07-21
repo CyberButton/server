@@ -70,7 +70,12 @@ export async function postQuestions(req, res) {
 }
 
 export async function deleteQuestions(req, res) {
-    res.json("questions api DELETE request")
+    try {
+        await Questions.deleteMany()
+    res.json("questions delete funcion called succesfully")
+    } catch (error) {
+        res.json({error})
+    }
 }
 
 //result
@@ -116,9 +121,9 @@ export async function generateQuestions(req, res) {
 
         const { prompt, numberOfMCQ, sourceType, userID, nameOfMCQ } = req.body
 
-        console.log({ prompt, numberOfMCQ, sourceType, userID, nameOfMCQ })
+        // console.log({ prompt, numberOfMCQ, sourceType, userID, nameOfMCQ })
 
-        console.log(userID)
+        // console.log(userID)
         const chatCompletion = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
             messages: [{role: "system", content: `You are a proffesional MCQ(multiple choice question) generator. You make MCQs from the data given to you. To make those MCQs you only rely on the data provided to you even if its incorrect or misleading, your purpose is not to make totaly accurate MCQs but to make MCQs only from contetns of the data provided. You make questions and correct answer from provided data, while incorrect answer variants can be made up. You always respond in this exact format: 
@@ -166,13 +171,20 @@ export async function generateQuestions(req, res) {
         //     ]
         //   }`
         
-        const data = chatCompletion.data.choices[0].message.content
-        const apiResponse = JSON.parse(data);
-        // console.log(apiResponse)
+        let apiResponse;
+
+        try {
+            const data = chatCompletion.data.choices[0].message.content;
+            console.log(data)
+            apiResponse = typeof data === 'string' ? JSON.parse(data) : data;
+        } catch (error) {
+            console.error('Error parsing data:', error);
+        }  
+        
 
         // Extract the questions and answers from the parsed JSON
         const { questions, answers } = apiResponse;
-        // console.log(answers)
+        console.log({ questions, answers });
 
         Questions.create({questions, answers, userID, nameOfMCQ, numberOfMCQ})
         res.json({questions, answers, userID, nameOfMCQ, numberOfMCQ})
