@@ -8,7 +8,10 @@ const router = Router()
 router.route('/questions')
     .get(controller.getQuestions)
     .post(controller.postQuestions)
-    .delete(controller.deleteQuestions)
+
+    
+router.route('/questions/:quizId')
+    .delete(controller.deleteQuestions);
 
 router.route('/results')
     .get(controller.getResults)

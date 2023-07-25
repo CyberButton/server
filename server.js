@@ -35,3 +35,7 @@ connect().then( () => {
 } ).catch(error => {
     console.log("database connection failed")
 });
+
+        // app.listen(port, () => {
+        //     console.log(`Server connected to http://localhost:${port}`)
+        // })

@@ -71,13 +71,17 @@ export async function postQuestions(req, res) {
 
 export async function deleteQuestions(req, res) {
     try {
-        const {quizId} = req.body;
-        await Questions.findByIdAndRemove(quizId);
-        res.json("questions delete funcion called succesfully")
+      console.log("in delete");
+      console.log(req.params); // Use req.params instead of req.body to get the quizId
+      const quizId = req.params.quizId; // Get the quizId from req.params
+      console.log(quizId);
+      await Questions.findByIdAndRemove(quizId);
+      res.json("questions delete function called successfully");
     } catch (error) {
-        res.json({error})
+      res.json({ error });
     }
-}
+  }
+  
 
 //result
 export async function getResults(req, res) {
@@ -113,8 +117,26 @@ export async function deleteResults(req, res) {
     }
 }
 
+function formatQuestions(data) {
+    // Regular expression to find keys without double quotes
+    const regex = /("?\bquestions\b"?|"?\bid\b"?|"?\bquestion\b"?|"?\boptions\b"?|"?\banswers\b"?)/g;
+
+    // Replace keys without double quotes with keys with double quotes
+    const formattedData = data.replace(regex, '"$1"');
+    
+    return formattedData;
+  }
+
 export async function generateQuestions(req, res) {
+    
+//       // Function to delay for a given number of milliseconds
+//   function delay(ms) {
+//     return new Promise(resolve => setTimeout(resolve, ms));
+//   }
+    
     try {
+
+
         const configuration = new Configuration({
             apiKey: process.env.OPENAI_API_KEY,
             });
@@ -161,61 +183,66 @@ export async function generateQuestions(req, res) {
 
         // const data = `{
         //     "questions": [
-        //       {
-        //         "id": 1,
-        //         "question": "who tf trynna  DEGUB?",
-        //         "options": [
-        //           "6.67 inches",
-        //           "6.55 inches",
-        //           "5.8 inches"
-        //         ]
-        //       },
-        //       {
-        //         "id": 2,
-        //         "question": "Which Gorilla Glass version is used for the front of Poco X3 Pro?",
-        //         "options": [
-        //           "Gorilla Glass 6",
-        //           "Gorilla Glass 5",
-        //           "Gorilla Glass 3"
-        //         ]
-        //       },
-        //       {
-        //         "id": 3,
-        //         "question": "What is the RAM capacity of Poco X3 Pro's 256GB variant?",
-        //         "options": [
-        //           "8GB",
-        //           "6GB",
-        //           "4GB"
-        //         ]
-        //       }
+        //         {
+        //             "id": 1,
+        //             "question": "What is the screen size of Poco X3 Pro?",
+        //             "options": [
+        //                 "5.8 inches",
+        //                 "6.2 inches",
+        //                 "6.67 inches"
+        //             ]
+        //         },
+        //         {
+        //             "id": 2,
+        //             "question": "What is the rear camera resolution of Poco X3 Pro?",
+        //             "options": [
+        //                 "48 MP",
+        //                 "64 MP",
+        //                 "12 MP"
+        //             ]
+        //         },
+        //         {
+        //             "id": 3,
+        //             "question": "What is the battery capacity of Poco X3 Pro?",
+        //             "options": [
+        //                 "4000mAh",
+        //                 "4500mAh",
+        //                 "5160mAh"
+        //             ]
+        //         }
         //     ],
-        //     "answers": [
-        //       0,
-        //       0,
-        //       0
-        //     ]
-        //   }`
+        //     "answers": [2, 0, 2]
+        // }`
         
         let apiResponse;
 
+        // Call the function to convert the data to the second format
+        //const formattedData = formatQuestions(data);
+
+        //console.log(formattedData);
+        // setTimeout(() => {
+            
+        //   }, 15000);
         try {
             const data = chatCompletion.data.choices[0].message.content;
+            
             console.log(data)
-            apiResponse = typeof data === 'string' ? JSON.parse(data) : data;
+            apiResponse = JSON.parse(data);
         } catch (error) {
             console.error('Error parsing data:', error);
+            throw(error)
         }  
         
 
         // Extract the questions and answers from the parsed JSON
         const { questions, answers } = apiResponse;
-        console.log({ questions, answers });
+        console.log( answers );
 
         Questions.create({questions, answers, userID, nameOfMCQ, numberOfMCQ})
         res.json({questions, answers, userID, nameOfMCQ, numberOfMCQ})
           
     } catch (error) {
         console.log(error)
-        res.json({error})
+        res.status(500).send("pease try again")
     }
 }
