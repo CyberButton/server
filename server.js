@@ -4,6 +4,7 @@ import cors from 'cors';
 import { config } from "dotenv";
 import router from "./router/route.js";
 import connect from "./database/connection.js";
+import fetch from "node-fetch";
 
 const app = express();
 
@@ -29,7 +30,7 @@ app.get('/ping', (req, res) => {
     res.send("Ping received!");
 });
 
-connect().then( () => {
+connect().then(() => {
     try {
         app.listen(port, () => {
             console.log(`Server connected to http://localhost:${port}`)
@@ -40,12 +41,11 @@ connect().then( () => {
             fetch('https://your-app-url-on-render.com/ping')
                 .then(response => console.log("Ping response:", response))
                 .catch(error => console.error("Error pinging the server:", error));
-            }, 780000); // 13 minutes
-
-    } catch(error) {
-        console.log("failed to strat the server at server.js line 31")
+        }, 780000); // 13 minutes
+    } catch (error) {
+        console.log("failed to start the server at server.js line 31")
     }
-} ).catch(error => {
+}).catch(error => {
     console.log("database connection failed")
 });
 
