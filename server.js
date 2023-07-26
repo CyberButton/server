@@ -35,12 +35,12 @@ connect().then( () => {
             console.log(`Server connected to http://localhost:${port}`)
         })
 
-        // Periodically make a request to the "/ping" endpoint every 5 minutes (300,000 milliseconds)
+        // Periodically make a request to the "/ping" endpoint every 13 minutes (780,000 milliseconds)
         setInterval(() => {
             fetch('https://your-app-url-on-render.com/ping')
                 .then(response => console.log("Ping response:", response))
                 .catch(error => console.error("Error pinging the server:", error));
-        }, 300000); // 5 minutes
+            }, 780000); // 13 minutes
 
     } catch(error) {
         console.log("failed to strat the server at server.js line 31")
