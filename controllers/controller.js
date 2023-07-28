@@ -1,6 +1,31 @@
 import Questions from "../models/questionsSchema.js"
 import Resluts from "../models/resultSchema.js"
 import { Configuration, OpenAIApi } from "openai"
+import PDFDocument from 'pdfkit';
+
+export async function generatePDF(req, res) {
+    const data = req.body;
+    console.log(data)
+    const doc = new PDFDocument();
+  
+    // Create the PDF content here based on the 'data' received from the frontend
+    doc.font('Helvetica-Bold').fontSize(20).text('Questionnaire', { align: 'center' });
+  
+    data.questions.forEach((question, index) => {
+      doc.moveDown().font('Helvetica').fontSize(15).text(`${index + 1}. ${question.question}`);
+  
+      question.options.forEach((option, optIndex) => {
+        const isCorrect = data.answers[index] === optIndex;
+        doc.moveDown().text(`${isCorrect ? '[X]' : '[ ]'} ${option}`);
+      });
+    });
+  
+    // Pipe the PDF to the response
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=AIquiz.pdf');
+    doc.pipe(res);
+    doc.end();  
+}
 
 export async function getQuestions(req, res) {
     try {
