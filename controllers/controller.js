@@ -154,13 +154,7 @@ function formatQuestions(data) {
 
 export async function generateQuestions(req, res) {
     
-//       // Function to delay for a given number of milliseconds
-//   function delay(ms) {
-//     return new Promise(resolve => setTimeout(resolve, ms));
-//   }
-    
     try {
-
 
         const configuration = new Configuration({
             apiKey: process.env.OPENAI_API_KEY,
@@ -169,12 +163,36 @@ export async function generateQuestions(req, res) {
 
         const { prompt, numberOfMCQ, sourceType, userID, nameOfMCQ } = req.body
 
-        // console.log({ prompt, numberOfMCQ, sourceType, userID, nameOfMCQ })
-
-        // console.log(userID)
-        const chatCompletion = await openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
-            messages: [{role: "system", content: `You are a proffesional MCQ(multiple choice question) generator. You make MCQs from the data given to you. To make those MCQs you only rely on the data provided to you even if its incorrect or misleading, your purpose is not to make totaly accurate MCQs but to make MCQs only from contetns of the data provided. You make questions and correct answer from provided data, while incorrect answer variants can be made up. You always respond in this json-like format { 
+        const fullText = [{role: "system", content: `You are a proffesional MCQ(multiple choice question) generator. You make MCQs from the data given to you. To make those MCQs you only rely on the data provided to you even if its incorrect or misleading, your purpose is not to make totaly accurate MCQs but to make MCQs only from contetns of the data provided. You make questions and correct answer from provided data, while incorrect answer variants can be made up. You always respond in this json-like format { 
+            questions : [
+                {
+                    id: _1_,
+                    question : _question 1_,
+                    options : [
+                        _Option0_,
+                        _Option1_,
+                        _Option2_,
+                    ]
+                },
+                {
+                    id: _2_,
+                    question : _question 2_,
+                    options : [
+                        _Option0_,
+                        _Option1_,
+                        _Option2_,
+                    ]
+                }
+            ], 
+            answers : [
+        _2_,
+        _0_
+        ]
+        }  where answers array contains indexes of correct answers in this example _option2_ is the correct answer for _question1_ and _option0_ is for _question 2_. Finally you dont include any special symbols/charachters try to replace them with text.`}, 
+        {role: "user", content: `make me ${numberOfMCQ} MCQs from given data: "${prompt}"`}]
+        
+        const keyWords = [
+            {role: "system", content: `You are a proffesional MCQ(multiple choice question) generator. You make MCQs related the key words that will be given to you. You always respond in this json-like format { 
                 questions : [
                     {
                         id: _1_,
@@ -196,16 +214,18 @@ export async function generateQuestions(req, res) {
                     }
                 ], 
                 answers : [
-     _2_,
-    _0_
-    ]
+        _2_,
+        _0_
+        ]
         }  where answers array contains indexes of correct answers in this example _option2_ is the correct answer for _question1_ and _option0_ is for _question 2_. Finally you dont include any special symbols/charachters try to replace them with text.`}, 
-        {role: "user", content: `make me ${numberOfMCQ} MCQs from given ${sourceType}: "${prompt}"`}],
+        {role: "user", content: `make me ${numberOfMCQ} MCQs from given ${sourceType}: "${prompt}"`}
+        ]
+        
+        const chatCompletion = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: sourceType === "key words" ? keyWords : fullText,
           });
               
-        // Parse the API response string into a JSON object
-        // const apiResponse = JSON.parse(chatCompletion.data.choices[0].message);
-
         // const data = `{
         //     "questions": [
         //         {
@@ -241,13 +261,6 @@ export async function generateQuestions(req, res) {
         
         let apiResponse;
 
-        // Call the function to convert the data to the second format
-        //const formattedData = formatQuestions(data);
-
-        //console.log(formattedData);
-        // setTimeout(() => {
-            
-        //   }, 15000);
         try {
             const data = chatCompletion.data.choices[0].message.content;
             
