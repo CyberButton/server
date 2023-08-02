@@ -161,7 +161,7 @@ export async function generateQuestions(req, res) {
             });
         const openai = new OpenAIApi(configuration);
 
-        const { prompt, numberOfMCQ, sourceType, userID, nameOfMCQ } = req.body
+        const { prompt, numberOfMCQ, sourceType, userID, nameOfMCQ, lang } = req.body
 
         const fullText = [{role: "system", content: `You are a proffesional MCQ(multiple choice question) generator. You make MCQs from the data given to you. To make those MCQs you only rely on the data provided to you even if its incorrect or misleading, your purpose is not to make totaly accurate MCQs but to make MCQs only from contetns of the data provided. You make questions and correct answer from provided data, while incorrect answer variants can be made up. You always respond in this json-like format { 
             questions : [
@@ -189,10 +189,10 @@ export async function generateQuestions(req, res) {
         _0_
         ]
         }  where answers array contains indexes of correct answers in this example _option2_ is the correct answer for _question1_ and _option0_ is for _question 2_. Finally you dont include any special symbols/charachters try to replace them with text.`}, 
-        {role: "user", content: `make me ${numberOfMCQ} MCQs from given data: "${prompt}"`}]
+        {role: "user", content: `${lang === 'ru' ? ("Мне нужно "+ numberOfMCQ +" MCQ из заданных данных") : ("make me " + numberOfMCQ + " MCQs from given data")}: "${prompt}"`}]
         
         const keyWords = [
-            {role: "system", content: `You are a proffesional MCQ(multiple choice question) generator. You make MCQs related the key words that will be given to you. You always respond in this json-like format { 
+            {role: "system", content: `You are a proffesional MCQ(multiple choice question) generator. You make fun, informative and engaging MCQs related the key words that will be given to you. You always respond in this json-like format { 
                 questions : [
                     {
                         id: _1_,
@@ -218,7 +218,7 @@ export async function generateQuestions(req, res) {
         _0_
         ]
         }  where answers array contains indexes of correct answers in this example _option2_ is the correct answer for _question1_ and _option0_ is for _question 2_. Finally you dont include any special symbols/charachters try to replace them with text.`}, 
-        {role: "user", content: `make me ${numberOfMCQ} MCQs from given ${sourceType}: "${prompt}"`}
+        {role: "user", content: `${lang === 'ru' ? ("Мне нужно " + numberOfMCQ + " MCQ из заданных ключевых слов") : ("make me " + numberOfMCQ + " MCQs from given key words")}: "${prompt}"`}
         ]
         
         const chatCompletion = await openai.createChatCompletion({
