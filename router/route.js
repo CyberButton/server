@@ -21,4 +21,7 @@ router.route('/results')
 router.route('/mcq-gen')
     .post(controller.generateQuestions)
 
+router.route('/admin-stats')
+    .get(controller.getUserCount)
+    
 export default router

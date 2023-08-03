@@ -105,8 +105,23 @@ export async function deleteQuestions(req, res) {
     } catch (error) {
       res.json({ error });
     }
-  }
-  
+}
+
+// for adimin stats
+export async function getUserCount(req, res) {
+    try {
+        const q = await Questions.find()
+        console.log(q.length)
+        // Extract unique userIDs using a Set
+        const uniqueUserIDs = new Set(q.map(question => question.userID));
+        console.log(uniqueUserIDs.size)
+        res.json(uniqueUserIDs.size)
+    } catch (error) {
+        console.log(error)
+        res.json({error})
+    }
+}
+
 
 //result
 export async function getResults(req, res) {
