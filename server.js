@@ -18,9 +18,9 @@ const port = process.env.PORT || 8080
 app.use('/api', router)
 
 app.get('/', (req, res) => {
-    try{
+    try {
         res.json("Get Request")
-    } catch(error) {
+    } catch (error) {
         res.json(error)
     }
 })
@@ -48,7 +48,3 @@ connect().then(() => {
 }).catch(error => {
     console.log("database connection failed")
 });
-
-        // app.listen(port, () => {
-        //     console.log(`Server connected to http://localhost:${port}`)
-        // })

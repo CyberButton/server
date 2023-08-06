@@ -14,28 +14,9 @@ const translate = new Translate({
         "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
         "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/quizai-service-account%40quiz-ai-translate.iam.gserviceaccount.com",
         "universe_domain": "googleapis.com"
-      },
+    },
     projectId: "quiz-ai-translate"
 });
-
-// export const detectLanguage = async (text) => {
-
-//     try {
-//         let response = await translate.detect(text);
-//         return response[0].language;
-//     } catch (error) {
-//         console.log(`Error at detectLanguage --> ${error}`);
-//         return 0;
-//     }
-// }
-
-// detectLanguage('Oggi è lunedì')
-//     .then((res) => {
-//         console.log(res);
-//     })
-//     .catch((err) => {
-//         console.log(err);
-//     });
 
 export async function translateText(text, targetLanguage) {
 
@@ -47,11 +28,3 @@ export async function translateText(text, targetLanguage) {
         return 0;
     }
 };
-
-// export translateText('Oggi è lunedì', 'en')
-//     .then((res) => {
-//         console.log(res);
-//     })
-//     .catch((err) => {
-//         console.log(err);
-//     });
