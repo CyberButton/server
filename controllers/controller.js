@@ -1,3 +1,4 @@
+import { translateText } from "../google_translate.js";
 import Questions from "../models/questionsSchema.js"
 import Resluts from "../models/resultSchema.js"
 import { Configuration, OpenAIApi } from "openai"
@@ -204,8 +205,10 @@ export async function generateQuestions(req, res) {
         _0_
         ]
         }  where answers array contains indexes of correct answers in this example _option2_ is the correct answer for _question1_ and _option0_ is for _question 2_. Finally you dont include any special symbols/charachters try to replace them with text.`}, 
-        {role: "user", content: `${lang === 'ru' ? ("Мне нужно "+ numberOfMCQ +" MCQ из заданных данных") : ("make me " + numberOfMCQ + " MCQs from given data")}: "${prompt}"`}]
+        // {role: "user", content: `${lang === 'ru' ? ("Мне нужно "+ numberOfMCQ +" MCQ из заданных данных") : ("make me " + numberOfMCQ + " MCQs from given data")}: "${prompt}"`}]
+        {role: "user", content: `make me ${numberOfMCQ} MCQs from given data: "${prompt}"`}]
         
+
         const keyWords = [
             {role: "system", content: `You are a proffesional MCQ(multiple choice question) generator. You make fun, informative and engaging MCQs related the key words that will be given to you. You always respond in this json-like format { 
                 questions : [
@@ -233,8 +236,12 @@ export async function generateQuestions(req, res) {
         _0_
         ]
         }  where answers array contains indexes of correct answers in this example _option2_ is the correct answer for _question1_ and _option0_ is for _question 2_. Finally you dont include any special symbols/charachters try to replace them with text.`}, 
-        {role: "user", content: `${lang === 'ru' ? ("Мне нужно " + numberOfMCQ + " MCQ из заданных ключевых слов") : ("make me " + numberOfMCQ + " MCQs from given key words")}: "${prompt}"`}
-        ]
+        // {role: "user", content: `${lang === 'ru' ? ("Мне нужно " + numberOfMCQ + " MCQ из заданных ключевых слов") : ("make me " + numberOfMCQ + " MCQs from given key words")}: "${prompt}"`}
+    
+        {role: "user", content: `make me ${numberOfMCQ} MCQs from given key words: "${prompt}"`}
+
+        
+    ]
         
         const chatCompletion = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
@@ -279,7 +286,7 @@ export async function generateQuestions(req, res) {
         try {
             const data = chatCompletion.data.choices[0].message.content;
             
-            console.log(data)
+            console.log(data);
             apiResponse = JSON.parse(data);
         } catch (error) {
             console.error('Error parsing data:', error);
@@ -288,8 +295,11 @@ export async function generateQuestions(req, res) {
         
 
         // Extract the questions and answers from the parsed JSON
-        const { questions, answers } = apiResponse;
-        console.log( answers );
+        let { questions, answers } = apiResponse;
+        if (lang === 'ru') {
+            questions = await translateQuestionsArray(questions, "ru");
+            console.log(questions)
+        }
 
         Questions.create({questions, answers, userID, nameOfMCQ, numberOfMCQ})
         res.json({questions, answers, userID, nameOfMCQ, numberOfMCQ})
@@ -298,4 +308,35 @@ export async function generateQuestions(req, res) {
         console.log(error)
         res.status(500).send("pease try again")
     }
+}
+
+// Function to translate the questions array (asynchronous)
+async function translateQuestionsArray(questionsArray, target) {
+    const translatedQuestions = await Promise.all(questionsArray.map(async (question) => {
+      const translatedOptions = await Promise.all(question.options.map(async (option) => {
+        return await translateText(option, target);
+      }));
+  
+      return {
+        ...question,
+        question: await translateText(question.question, target),
+        options: translatedOptions
+      };
+    }));
+  
+    return translatedQuestions;
+  }
+
+export async function test(req, res) {
+    const {text, target} = req.body
+    console.log({text, target})
+    let translated = ''
+    try {
+        translated = await translateText(text, target);
+        console.log(translated)
+    } catch (error) {
+        console.log(error)
+    }
+
+    res.json(translated)
 }

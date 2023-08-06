@@ -5,6 +5,9 @@ const router = Router()
 //router.get('/questions', controller.getQuestions)
 //router.post("/questions", controller.insertQuestions)
 
+router.route('/test')
+    .get(controller.test)
+
 router.route('/questions')
     .get(controller.getQuestions)
     .post(controller.postQuestions)
