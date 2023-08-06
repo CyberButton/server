@@ -109,14 +109,24 @@ export async function deleteQuestions(req, res) {
 }
 
 // for adimin stats
-export async function getUserCount(req, res) {
+export async function getAdminStats(req, res) {
     try {
         const q = await Questions.find()
         console.log(q.length)
+
+        // Calculate the total number of questions based on the "numberOfMCQ" property
+        const numberTotalQuestions = q.reduce((acc, question) => acc + question.numberOfMCQ, 0);
+        console.log(numberTotalQuestions);
+
         // Extract unique userIDs using a Set
         const uniqueUserIDs = new Set(q.map(question => question.userID));
         console.log(uniqueUserIDs.size)
-        res.json(uniqueUserIDs.size)
+        // Create an object containing both stats
+        const stats = {
+        totalQuestions: numberTotalQuestions,
+        totalUsers: uniqueUserIDs.size
+        };
+        res.json(stats)
     } catch (error) {
         console.log(error)
         res.json({error})
@@ -326,17 +336,3 @@ async function translateQuestionsArray(questionsArray, target) {
   
     return translatedQuestions;
   }
-
-export async function test(req, res) {
-    const {text, target} = req.body
-    console.log({text, target})
-    let translated = ''
-    try {
-        translated = await translateText(text, target);
-        console.log(translated)
-    } catch (error) {
-        console.log(error)
-    }
-
-    res.json(translated)
-}

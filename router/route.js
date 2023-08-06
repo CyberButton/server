@@ -5,13 +5,9 @@ const router = Router()
 //router.get('/questions', controller.getQuestions)
 //router.post("/questions", controller.insertQuestions)
 
-router.route('/test')
-    .get(controller.test)
-
 router.route('/questions')
     .get(controller.getQuestions)
     .post(controller.postQuestions)
-
     
 router.route('/questions/:quizId')
     .delete(controller.deleteQuestions);
@@ -25,6 +21,6 @@ router.route('/mcq-gen')
     .post(controller.generateQuestions)
 
 router.route('/admin-stats')
-    .get(controller.getUserCount)
+    .get(controller.getAdminStats)
     
 export default router
