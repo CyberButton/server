@@ -257,7 +257,7 @@ export async function generateQuestions(req, res) {
 
         // Extract the questions and answers from the parsed JSON
         let { questions, answers } = apiResponse;
-        if (lang === 'ru') {
+        if (lang !== 'en') {
             questions = await translateQuestionsArray(questions, "ru");
         }
 
