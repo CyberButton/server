@@ -18,9 +18,17 @@ const translate = new Translate({
     projectId: "quiz-ai-translate"
 });
 
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export async function translateText(text, targetLanguage) {
 
     try {
+
+        // Introduce a delay of 100ms before proceeding with the translation request
+        await delay(150);
+
         let [response] = await translate.translate(text, targetLanguage);
         return response;
     } catch (error) {
