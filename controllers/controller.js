@@ -186,60 +186,60 @@ export async function generateQuestions(req, res) {
         const { prompt, numberOfMCQ, sourceType, userID, nameOfMCQ, lang } = req.body
 
         const fullText = [{role: "system", content: `You are a proffesional MCQ(multiple choice question) generator. You make MCQs from the data given to you. To make those MCQs you only rely on the data provided to you even if its incorrect or misleading, your purpose is not to make totaly accurate MCQs but to make MCQs only from contetns of the data provided. You make questions and correct answer from provided data, while incorrect answer variants can be made up. You always respond in this json-like format { 
-            questions : [
+            "questions" : [
                 {
-                    id: _1_,
-                    question : _question 1_,
-                    options : [
-                        _Option0_,
-                        _Option1_,
-                        _Option2_,
+                    "id": _1_,
+                    "question" : "_Question1_",
+                    "options" : [
+                        "_Option0_",
+                        "_Option1_",
+                        "_Option2_",
                     ]
                 },
                 {
-                    id: _2_,
-                    question : _question 2_,
-                    options : [
-                        _Option0_,
-                        _Option1_,
-                        _Option2_,
+                    "id": _2_,
+                    "question" : "_Question2_",
+                    "options" : [
+                        "_Option0_",
+                        "_Option1_",
+                        "_Option2_",
                     ]
                 }
             ], 
-            answers : [
+            "answers" : [
         _2_,
         _0_
         ]
-        }  where answers array contains indexes of correct answers in this example _option2_ is the correct answer for _question1_ and _option0_ is for _question 2_. Finally you dont include any special symbols/charachters try to replace them with text.`}, 
+        } , where answers array contains indexes of correct answers, in this example _Option2_ is the correct answer for _Question1_ and _Option0_ is for _Question 2_. Finally you dont include any special symbols or charachters that will break the validity of json structure, try to replace them with text.`}, 
         {role: "user", content: `${lang === 'ru' ? ("Мне нужно "+ numberOfMCQ +" MCQ из заданных данных") : ("make me " + numberOfMCQ + " MCQs from given data")}: "${prompt}"`}]
         
         const keyWords = [
             {role: "system", content: `You are a proffesional MCQ(multiple choice question) generator. You make fun, informative and engaging MCQs related the key words that will be given to you. You always respond in this json-like format { 
-                questions : [
-                    {
-                        id: _1_,
-                        question : _question 1_,
-                        options : [
-                            _Option0_,
-                            _Option1_,
-                            _Option2_,
-                        ]
-                    },
-                    {
-                        id: _2_,
-                        question : _question 2_,
-                        options : [
-                            _Option0_,
-                            _Option1_,
-                            _Option2_,
-                        ]
-                    }
-                ], 
-                answers : [
+               "questions" : [
+                {
+                    "id": _1_,
+                    "question" : "_Question1_",
+                    "options" : [
+                        "_Option0_",
+                        "_Option1_",
+                        "_Option2_",
+                    ]
+                },
+                {
+                    "id": _2_,
+                    "question" : "_Question2_",
+                    "options" : [
+                        "_Option0_",
+                        "_Option1_",
+                        "_Option2_",
+                    ]
+                }
+            ], 
+            "answers" : [
         _2_,
         _0_
         ]
-        }  where answers array contains indexes of correct answers in this example _option2_ is the correct answer for _question1_ and _option0_ is for _question 2_. Finally you dont include any special symbols/charachters try to replace them with text.`}, 
+        } , where answers array contains indexes of correct answers, in this example _Option2_ is the correct answer for _Question1_ and _Option0_ is for _Question 2_. Finally you dont include any special symbols or charachters that will break the validity of json structure, try to replace them with text.`}, 
         {role: "user", content: `${lang === 'ru' ? ("Мне нужно " + numberOfMCQ + " MCQ из заданных ключевых слов") : ("make me " + numberOfMCQ + " MCQs from given key words")}: "${prompt}"`}
         ]
         
