@@ -244,7 +244,7 @@ export async function generateQuestions(req, res) {
         ]
         
         const chatCompletion = await openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
+            model: "gpt-4o-mini",
             messages: sourceType === "key words" ? keyWords : fullText,
           });
               
